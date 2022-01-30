@@ -83,7 +83,7 @@ table {
             <div style="width: 50%;">
                 <table style="width:100%;">
                     <tr>
-                        <td class="box button bg1" style="width:16.6%">D</td>
+                        <td class="box button bg1" style="width:16.6%">N</td>
                         <td class="box button bg3" style="width:16.6%">O</td>
                         <td class="box button bg2" style="width:16.6%">R</td>
                         <td class="box button bg6" style="width:16.6%">D</td>
@@ -108,34 +108,34 @@ table {
                     </tr>
                 </table>
             </div>
-            <div class="button">&nbsp;</div>
-            <div class="box bg1" style="width: 60%; border:double;" id="daily">
-                <table style="width:100%;">
-                    <tr>
-                        <td style="width:50%; text-align:right;">daily</td>
-                        <td style="width:50%;">dordle</td>
-                    </tr>
-                </table>
-            </div>
-            <div style="height:8px;">&nbsp;</div>
-            <div class="bg3" style="font-size:80%;">
-                <table style="width:100%;">
-                    <tr>
-                        <td style="width:50%; text-align:right;">a new dordle</td>
-                        <td style="width:50%;">each day</td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td id="next_daily">every day</td>
-                    </tr>
-                </table>
-            </div>
+            <!-- <div class="button">&nbsp;</div>-->
+            <!-- <div class="box bg1" style="width: 60%; border:double;" id="daily">-->
+            <!--     <table style="width:100%;">-->
+            <!--         <tr>-->
+            <!--             <td style="width:50%; text-align:right;">daily</td>-->
+            <!--             <td style="width:50%;">nordle</td>-->
+            <!--         </tr>-->
+            <!--     </table>-->
+            <!-- </div>-->
+            <!-- <div style="height:8px;">&nbsp;</div>-->
+            <!-- <div class="bg3" style="font-size:80%;">-->
+            <!--     <table style="width:100%;">-->
+            <!--         <tr>-->
+            <!--             <td style="width:50%; text-align:right;">a new nordle</td>-->
+            <!--             <td style="width:50%;">each day</td>-->
+            <!--         </tr>-->
+            <!--         <tr>-->
+            <!--             <td></td>-->
+            <!--             <td id="next_daily">every day</td>-->
+            <!--         </tr>-->
+            <!--     </table>-->
+            <!-- </div>-->
             <div class="button">&nbsp;</div>
             <div class="box bg5" style="width: 60%; border:double;" id="free">
                 <table style="width:100%;">
                     <tr>
                         <td style="width:50%; text-align:right;">free</td>
-                        <td style="width:50%;">dordle</td>
+                        <td style="width:50%;">nordle</td>
                     </tr>
                 </table>
             </div>
@@ -147,7 +147,7 @@ table {
                         <td style="width:50%;">as you want</td>
                     </tr>
                     <tr>
-                        <td style="text-align:right;">every dordle</td>
+                        <td style="text-align:right;">every nordle</td>
                         <td>is a surprise</td>
                     </tr>
                 </table>
@@ -595,7 +595,7 @@ function restart() {
         var startDate = (new Date('01/24/2022'));
         seed = ((date.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) >> 0;
 
-        printclear(acquire("game_title"), "daily dordle #" + seed.toString(10).padStart(4, "0"));
+        printclear(acquire("game_title"), "daily nordle #" + seed.toString(10).padStart(4, "0"));
         console.log(seed.toString(10));
         last_daily = seed;
         if (!no_localstorage) {
@@ -608,7 +608,7 @@ function restart() {
         rnd = new MersenneTwister(seed);
     } else if (free_mode) {
         rnd = new MersenneTwister();
-        printclear(acquire("game_title"), "free dordle");
+        printclear(acquire("game_title"), "free nordle");
     }
     rnd.genrand_int31();
     rnd.genrand_int31();
@@ -719,9 +719,9 @@ function do_share(discord, copy) {
     printclear(acquire("answer"), real_answer);
 
     if (daily_mode) {
-        text_share = "Daily Dordle #" + seed.toString(10).padStart(4, "0") + " " + (answer_correct[0] >= 0 ? (answer_correct[0] + 1) : "X") + "&" + (answer_correct[1] >= 0 ? (answer_correct[1] + 1) : "X") + "/7 ";
+        text_share = "Daily nordle #" + seed.toString(10).padStart(4, "0") + " " + (answer_correct[0] >= 0 ? (answer_correct[0] + 1) : "X") + "&" + (answer_correct[1] >= 0 ? (answer_correct[1] + 1) : "X") + "/7 ";
     } else {
-        text_share = "Dordle " + (answer_correct[0] >= 0 ? (answer_correct[0] + 1) : "X") + "&" + (answer_correct[1] >= 0 ? (answer_correct[1] + 1) : "X") + "/7 ";
+        text_share = "nordle " + (answer_correct[0] >= 0 ? (answer_correct[0] + 1) : "X") + "&" + (answer_correct[1] >= 0 ? (answer_correct[1] + 1) : "X") + "/7 ";
         if (line >= 7 || (answer_correct[0] >= 0 && answer_correct[1] >= 0)) text_share += "||`" + answer[0].toUpperCase() + "&" + answer[1].toUpperCase() + "`||";
     }
 
@@ -735,7 +735,7 @@ function do_share(discord, copy) {
     for (var i = 0; i <= l; i++) {
         text_share += share[0][i] + " " + share[1][i] + ((discord) ? (" ||`" + guesses[i].toUpperCase() + "`||") : "") + "\n";
     }
-    text_share += discord ? "<https://zaratustra.itch.io/dordle>" : "zaratustra.itch.io/dordle";
+    text_share += discord ? "<https://zaratustra.itch.io/nordle>" : "zaratustra.itch.io/nordle";
     if (!discord) text_share = text_share.replaceAll("||", "").replaceAll("`", "");
     printclear(acquire("share_content"), text_share);
 
