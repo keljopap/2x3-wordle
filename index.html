@@ -694,8 +694,8 @@ function restart() {
     guess_current = "";
     //acquire("share").style.display="none";
     //acquire("share_discord").style.display="none";
-    //acquire("share_content").style.display = "none";
-  acquire("keyboard").forEach((node) => node.style.display = "");
+    // acquire("share_content").forEach((node) => node.style.display = "none");
+    acquire("keyboard").forEach((node) => node.style.display = "");
 
     for (var l = 0; l < ATTEMPTS; l++) {
         clear_line(l);
@@ -817,9 +817,9 @@ acquire("share_discord").forEach((node) => node.onclick = function() {
 
 function do_share(discord, copy) {
     var real_answer = answer[0].toUpperCase()
-  for (const [tier, game, box] of NORDLE_BOXES.slice(1)) {
-    real_answer = real_answer + " & " + answer[tier].toUpperCase()
-  }
+    for (const [tier, game, box] of NORDLE_BOXES.slice(1)) {
+      real_answer = real_answer + " & " + answer[tier].toUpperCase()
+    }
     // + " & " + answer[1].toUpperCase();
     printclear(acquire("answer"), real_answer);
 
@@ -840,6 +840,16 @@ function do_share(discord, copy) {
     for (var i = 0; i <= l; i++) {
         text_share += share[0][i] + " " + share[1][i] + ((discord) ? (" ||`" + guesses[i].toUpperCase() + "`||") : "") + "\n";
     }
+    if (answer_correct[2] >= 0 && answer_correct[3] >= 0) {
+        if (answer_correct[2] >= answer_correct[3]) l = answer_correct[2];
+        else l = answer_correct[3];
+    }
+    for (var i = 0; i <= l; i++) {
+        text_share += share[2][i] + " " + share[3][i] + ((discord) ? (" ||`" + guesses[i].toUpperCase() + "`||") : "") + "\n";
+    }
+
+    console.log(text_share)
+
     text_share += discord ? "<https://zaratustra.itch.io/nordle>" : "zaratustra.itch.io/nordle";
     if (!discord) text_share = text_share.replace(/\|\|/g, "").replace(/`/, "");
     printclear(acquire("share_content"), text_share);
