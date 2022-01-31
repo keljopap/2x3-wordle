@@ -353,6 +353,10 @@ table {
 <script>
 
 NORDLE_WIDTH = 4
+NORDLE_SECTIONS = [
+  [1, 0],
+  [2, 2],
+]
 NORDLE_BOXES = [
   // tier, game, box
   [0, 1, 1],
@@ -646,7 +650,7 @@ function restart() {
     if (daily_mode) {
         var date = (new Date());
         var startDate = (new Date('01/24/2022'));
-        seed = ((date.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) >> 0;
+        seed = 12346 * ((date.getTime() - startDate.getTime()) / (1000 * 3600 * 24)) >> 0;
 
         printclear(acquire("game_title"), "daily nordle #" + seed.toString(10).padStart(4, "0"));
         console.log(seed.toString(10));
@@ -855,17 +859,21 @@ function render_bg_keys() {
     if (answer_correct[1] < 0 && answer_correct[0] >= 0) pos = " 10%";
 
     for (k in keys) {
+      for (const [game, section] of NORDLE_SECTIONS) {
         var left = "white";
         var right = "white";
-        if (guess_letters[0][keys[k]] == 0) left = "#808080";
-        if (guess_letters[0][keys[k]] == 1) left = "#ffcc00";
-        if (guess_letters[0][keys[k]] == 2) left = "#00cc88";
-        if (guess_letters[1][keys[k]] == 0) right = "#808080";
-        if (guess_letters[1][keys[k]] == 1) right = "#ffcc00";
-        if (guess_letters[1][keys[k]] == 2) right = "#00cc88";
-        var bg = "linear-gradient(to right, " + left + ", " + left + pos + ", " + right + pos + ", " + right + ")";
+        if (guess_letters[section][keys[k]] == 0) { left = "#808080" }
+        if (guess_letters[section][keys[k]] == 1) { left = "#ffcc00" }
+        if (guess_letters[section][keys[k]] == 2) { left = "#00cc88" }
+
+        if (guess_letters[section][keys[k]] == 0) { right = "#808080" }
+        if (guess_letters[section+1][keys[k]] == 1) { right = "#ffcc00" }
+        if (guess_letters[section+1][keys[k]] == 2) { right = "#00cc88" }
         // console.log(k, keys[k], bg);
-      acquire(keys[k]).forEach((node) => node.style.backgroundImage = bg)
+        var bg = "linear-gradient(to right, " + left + ", " + left + pos + ", " + right + pos + ", " + right + ")";
+        acquire("game-" + (game) + " " + keys[k]).forEach((node) => node.style.backgroundImage = bg)
+        // acquire("game-" + (game) + " " + keys[k]).forEach((node) => node.style.backgroundImage = bg)
+      }
     }
 }
 
