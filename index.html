@@ -773,6 +773,7 @@ function addIdSuffix(node, suffix) {
 var gameTwo = document.getElementById("game").cloneNode(true);
 addIdSuffix(gameTwo, "_2")
 acquire("body")[0].appendChild(gameTwo)
+acquire("box restart")[1].style.display = "none";
 
 addClass(document.getElementById("game"), "game-1")
 addClass(document.getElementById("game_2"), "game-2")
