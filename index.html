@@ -729,7 +729,7 @@ table {
         <div id="post_game" style="">
             <table width="100%">
                 <tr height="33%">
-                    <td rowspan=3 style="width:50%; "> <textarea class="box" style="width:100%; border: 1px solid;overflow:auto;resize:none;" rows=11 id="share_content">test</textarea></td>
+                    <td rowspan=4 style="width:50%; "> <textarea class="box" style="width:100%; height: 100%;border: 1px solid;overflow:auto;resize:none;" rows=14 id="share_content">test</textarea></td>
                     <td style="font-size:75%; width:50%; text-align:center;" id="answer">&nbsp;</td>
                 </tr>
                 <tr height="33%">
@@ -737,6 +737,9 @@ table {
                 </tr>
                 <tr height="33%">
                     <td class="box" style="border: none; border-style: double;font-size:50%;height:33%;cursor:pointer;" id="share_discord">copy in discord format</td>
+                </tr>
+                <tr height="33%">
+                    <td class="box" style="border: none; border-style: double;font-size:50%;height:33%;cursor:pointer;" id="share_twitter">copy in twitter format</td>
                 </tr>
             </table>
         </div>
@@ -780,6 +783,7 @@ table {
         </table>
     </div>
 </div>
+<canvas id="canvas" width="280" height="430" style="display:none;"></canvas>
 <script src="https://v6p9d9t4.ssl.hwcdn.net/html/5162977/mersenne.js"></script>
 <script>
 function el(n, t) {
@@ -1172,7 +1176,7 @@ function show_post_game(show) {
     if (show) {
         acquire("post_game").style.display = "";
         acquire("keyboard").style.display = "none";
-        do_share(false, false);
+        do_share(false, "default");
     } else {
         acquire("post_game").style.display = "none";
         acquire("keyboard").style.display = "";
@@ -1485,10 +1489,13 @@ acquire("leave_tutorial").onclick = function() {
     pushHistory({tutorial: undefined})
 }
 acquire("share").onclick = function() {
-    do_share(false, true);
+    do_share(true, "default");
 }
 acquire("share_discord").onclick = function() {
-    do_share(true, true);
+    do_share(true, "discord");
+}
+acquire("share_twitter").onclick = function() {
+    do_share(true, "twitter");
 }
 acquire("reset_free").onclick = function() {
     if (confirm("Are you sure you want to start a new Free Quordle? (The current game will be deleted)")) {
@@ -1498,7 +1505,9 @@ acquire("reset_free").onclick = function() {
     }
 }
 
-function do_share(discord, copy) {
+function do_share(copy, copyType) {
+    var discord = copyType === "discord"
+
     var real_answer = answer[0].toUpperCase() + " & " + answer[1].toUpperCase() + " & " + answer[2].toUpperCase() + " & " + answer[3].toUpperCase();
     printclear(acquire("answer"), real_answer);
 
@@ -1518,6 +1527,8 @@ function do_share(discord, copy) {
     }
 
     text_share += "\n";
+    canvas_title = text_share
+    canvas_text = "";
 
     var l1 = line - 1;
     if (answer_correct[0] >= 0 && answer_correct[1] >= 0 ) {
@@ -1529,23 +1540,57 @@ function do_share(discord, copy) {
     }
     for (var i = 0; i <= l1; i++) {
         text_share += share[0][i] + " " + share[1][i] + ((discord) ? (" ||`" + guesses[i].toUpperCase() + "`||") : "") + "\n";
+        canvas_text += share[0][i] + "    " + share[1][i] + "\n";
     }
+    text_share += "\n"
+    canvas_text += canvas_title
+    canvas_text += "fireph.github.io/quordle\n"
     for (var i = 0; i <= l2; i++) {
         text_share += share[2][i] + " " + share[3][i] + ((discord) ? (" ||`" + guesses[i].toUpperCase() + "`||") : "") + "\n";
+        canvas_text += share[2][i] + "    " + share[3][i] + "\n";
     }
     text_share += discord ? "<https://fireph.github.io/quordle>" : "fireph.github.io/quordle";
     if (!discord) text_share = text_share.replaceAll("||", "").replaceAll("`", "");
+    console.log(text_share)
     printclear(acquire("share_content"), text_share);
 
     if (copy) {
-        acquire("share_content").select();
-        document.execCommand("copy");
+        if (copyType === "twitter") {
+            const canvas = document.querySelector("#canvas");
+            const ctx = canvas.getContext("2d");
+            ctx.fillStyle = "black";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.font = '16px Arial'
+            ctx.textAlign = "center";
+            ctx.textBaseline = "top"; 
+            ctx.fillStyle = "#ffffff"; 
+            var canvas_lines = canvas_text.split("\n")
+
+            for (var i = 0 ; i < canvas_lines.length; i++) {
+                ctx.fillText(canvas_lines[i], canvas.width / 2, 20 + i * 20)
+            }
+
+            canvas.toBlob(function(blob) {
+                alert("got blob")
+                const item = new ClipboardItem({ "image/png": blob });
+                alert("got clipboard item")
+                navigator.clipboard.write([item]).then(function () {
+                    alert("done")
+                }, function (err) {
+                    alert(err);
+                });
+
+            });
+        } else {
+            acquire("share_content").select();
+            document.execCommand("copy");
+        }
     }
 
     if (copy && window.gtag) {
         gtag("event", "share", {
             mode: daily_mode ? "daily" : "free",
-            share_type: discord ? "discord" : "normal",
+            share_type: copyType,
             daily_seed: daily_mode ? seed : undefined
         });
     }
