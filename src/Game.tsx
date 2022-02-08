@@ -25,7 +25,7 @@ const Game: Component<GameProps> = (props) => {
   };
   document.addEventListener("keydown", keyEventListener);
   onCleanup(() => document.removeEventListener("keydown", keyEventListener));
-  // wowo very cool
+
   return (
     <div
       class={`overflow-auto max-w-[550px] w-full h-full m-auto flex flex-col flex-1`}
